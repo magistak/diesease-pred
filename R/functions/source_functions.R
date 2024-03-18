@@ -1,0 +1,6 @@
+source("R/functions/table_for_iteration.R")
+source("R/functions/filter_surv_all.R")
+source("R/functions/cox_stats_from_table.R")
+source("R/functions/cox_plot_from_table.R")
+source("R/functions/incidence_plot_from_table.R")
+source("R/functions/merge_diseases.R")
