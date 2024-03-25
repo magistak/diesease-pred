@@ -22,9 +22,9 @@ ui <- fluidPage(
         column(
           width = 8,
           # Add the first clickable heatmap
-          plotOutput("heatmap_clin", click = "clin_click"),
+          plotOutput("heatmap_clin", click = "heatmap1"),
           # Add the second clickable heatmap
-          plotOutput("heatmap_nmr", click = "nmr_click")
+          plotOutput("heatmap_nmr", click = "heatmap2")
         ),
         column(
           width = 4,
