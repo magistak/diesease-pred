@@ -2,8 +2,7 @@
 source("R/functions_upd/source_functions.R")
 source_functions()
 load_libraries()
-library(forcats)
-library(mgcv)
+
 
 # source("other_functions")
 
@@ -70,6 +69,7 @@ cox_model <-
 cox_from_table(cox_table = table,
                model_vars = model_vars,
                spline_vars = c("met", "age"))
+
 met_pred <- 
 tibble(
 met = orig_met_from_spline_cox(cox_model),
@@ -101,7 +101,18 @@ table_v <-
   mutate(met_left = pmax(met_min - table$met, 0 ),
          met_right = pmax(met - met_min, 0))
 
+table_v2 <- 
+  table |> 
+  mutate(met_x = met,
+         met_y = pmax(met - met_min, 0))
+
+
 cox_v <- cph(Surv(time = time, event = event) ~ met_left + met_right, data = table_v)
+cox_v2 <- cph(Surv(time = time, event = event) ~ met_x + met_y, data = table_v2)
+coefs <- coefficients(cox_v2)
+exp(coefs[1])
+exp(coefs[1]+coefs[2])
+
 cox_lin <- cph(Surv(time = time, event = event) ~ met, data = table_v)
 
 met_lh_left <- 
@@ -114,6 +125,7 @@ met_lh_right <-
     met=table$met[table$met >= met_min],
     lh = predict(cox_v)[table$met >= met_min]
   ) 
+
 hr_from_met_lh <- function(met_lh){
   met <- met_lh$met[1:2]
   lh <- met_lh$lh[1:2]
@@ -122,6 +134,7 @@ hr_from_met_lh <- function(met_lh){
   coef <- (lh[sec]-lh[first])/(met[sec]-met[first])
   exp(coef)
 }
+
 tibble(
   lh = predict(cox_v),
   met = table_v$met,
@@ -129,8 +142,18 @@ tibble(
   ggplot(aes(x = met, y = lh))+
   geom_bin2d()
 
+tibble(
+  lh = predict(cox_v2),
+  met = table_v$met,
+) |> 
+  ggplot(aes(x = met, y = lh))+
+  geom_bin2d()
 
+identical(predict(cox_v), predict(cox_v2))
+predict(cox_v) == predict(cox_v2)
 hrs <- map_dbl(list(met_lh_left, met_lh_right), hr_from_met_lh)
+predict(cox_v) |> tail(5) == predict(cox_v2) |> tail(5)
+
 # lrtest
 lrtest(cox_v,cox_lin)
 
