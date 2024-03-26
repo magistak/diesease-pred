@@ -9,7 +9,6 @@ biom_list <- c(met_list, clin_list)
 disease_list <- c("all-cause mortality", "T2 Diabetes", "COPD", "Liver Disease", "cvd") |> make_clean_names()
 health_filters <- c("is_healthy_1",  "is_healthy_3", "is_healthy_7")
 
-# run with: both sex, health_filter_1, no bmi filter
 # read survival data
 surv_all <- 
   read_surv_all(path = "data/surv_all_bmi_clin.tsv",
